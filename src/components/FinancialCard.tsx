@@ -31,19 +31,21 @@ export function FinancialCard({
   };
 
   return (
-    <Card className={cn("shadow-soft hover:shadow-medium transition-all duration-300 animate-scale-in", className)}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+    <Card className={cn("shadow-soft hover:shadow-strong transition-all duration-300 animate-scale-in bg-gradient-card border-border/50", className)}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+        <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
           {title}
         </CardTitle>
-        <Icon className="w-5 h-5 text-primary/70" />
+        <div className="p-2 bg-primary/10 rounded-lg">
+          <Icon className="w-5 h-5 text-primary" />
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-foreground mb-1">
+        <div className="text-3xl font-bold text-foreground mb-2">
           {value}
         </div>
         {change && (
-          <p className={cn("text-xs", getChangeColor())}>
+          <p className={cn("text-sm font-medium", getChangeColor())}>
             {change}
           </p>
         )}

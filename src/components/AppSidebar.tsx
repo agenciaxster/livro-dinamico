@@ -49,33 +49,33 @@ export function AppSidebar() {
   const isActive = (path: string) => currentPath === path;
   const getNavClasses = ({ isActive }: { isActive: boolean }) =>
     isActive 
-      ? "bg-primary text-primary-foreground font-medium shadow-soft" 
-      : "hover:bg-muted/50 transition-colors duration-200";
+      ? "bg-primary text-primary-foreground font-medium shadow-soft rounded-lg mx-2" 
+      : "hover:bg-accent/10 transition-all duration-200 rounded-lg mx-2 hover:shadow-soft";
 
   return (
     <Sidebar
       className={`${collapsed ? "w-16" : "w-64"} transition-all duration-300 border-r border-border/50`}
       collapsible="icon"
     >
-      <SidebarContent className="bg-card">
+      <SidebarContent className="bg-gradient-sidebar border-r border-border/50">
         {/* Logo/Brand */}
-        <div className="p-4 border-b border-border/50">
+        <div className="p-6 border-b border-border/50">
           <div className={`flex items-center gap-3 ${collapsed ? "justify-center" : ""}`}>
-            <div className="flex-shrink-0 w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <BarChart3 className="w-5 h-5 text-white" />
+            <div className="flex-shrink-0 w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-medium">
+              <BarChart3 className="w-6 h-6 text-white" />
             </div>
             {!collapsed && (
               <div className="animate-fade-in">
-                <h2 className="font-bold text-foreground">Livro Caixa</h2>
-                <p className="text-xs text-muted-foreground">Sistema Financeiro</p>
+                <h2 className="font-bold text-lg text-foreground">Livro Caixa</h2>
+                <p className="text-sm text-muted-foreground">Sistema Financeiro</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Main Navigation */}
-        <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? "sr-only" : ""}>
+        <SidebarGroup className="px-3">
+          <SidebarGroupLabel className={`text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 ${collapsed ? "sr-only" : ""}`}>
             Navegação Principal
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -97,9 +97,9 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Management Section */}
-        <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? "sr-only" : ""}>
-            Gerenciamento
+        <SidebarGroup className="px-3">
+          <SidebarGroupLabel className={`text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 ${collapsed ? "sr-only" : ""}`}>
+            Gerenciamento  
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>

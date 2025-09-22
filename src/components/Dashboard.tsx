@@ -22,16 +22,18 @@ const mockData = {
 
 export function Dashboard() {
   return (
-    <div className="p-6 space-y-6 bg-background min-h-screen">
+    <div className="p-6 space-y-8 bg-background min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Dashboard Financeiro</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-4xl font-bold text-foreground bg-gradient-primary bg-clip-text text-transparent">
+            Dashboard Financeiro
+          </h1>
+          <p className="text-muted-foreground mt-2 text-lg">
             Visão geral das suas finanças em tempo real
           </p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted px-3 py-2 rounded-lg">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-card border border-border px-4 py-3 rounded-xl shadow-soft">
           <Calendar className="w-4 h-4" />
           Última atualização: hoje às 14:30
         </div>

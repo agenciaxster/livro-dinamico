@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { Button } from "@/components/ui/button";
 import { Bell, User } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -24,6 +25,7 @@ export function Layout({ children }: LayoutProps) {
             </div>
             
             <div className="flex items-center gap-3">
+              <ThemeToggle />
               <Button variant="outline" size="sm" className="relative">
                 <Bell className="w-4 h-4" />
                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full"></span>
