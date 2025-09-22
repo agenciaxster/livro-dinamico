@@ -2,57 +2,73 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Financial Dashboard Design System - Professional Blue/Teal Palette */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 248 250 252;
+    --foreground: 203 24% 9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 203 24% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 203 24% 9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 205 100% 21%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 205 100% 16%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 204 44% 98%;
+    --secondary-foreground: 203 24% 9%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 206 24% 97%;
+    --muted-foreground: 203 23% 42%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 175 76% 32%;
+    --accent-foreground: 0 0% 100%;
+    --accent-hover: 175 76% 27%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 142 71% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 38 92% 97%;
 
-    --radius: 0.5rem;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --sidebar-background: 0 0% 98%;
+    --border: 204 20% 94%;
+    --input: 204 20% 94%;
+    --ring: 205 100% 21%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --radius: 0.75rem;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Financial Dashboard Specific Colors */
+    --profit: 142 71% 45%;
+    --profit-light: 142 71% 97%;
+    --loss: 0 84% 60%;
+    --loss-light: 0 84% 97%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(205 100% 21%), hsl(175 76% 32%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(204 44% 98%));
+    
+    /* Shadows */
+    --shadow-soft: 0 2px 8px -2px hsl(205 100% 21% / 0.08);
+    --shadow-medium: 0 4px 16px -4px hsl(205 100% 21% / 0.12);
+    --shadow-strong: 0 8px 32px -8px hsl(205 100% 21% / 0.16);
 
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 248 250 252;
+    --sidebar-foreground: 203 24% 9%;
+    --sidebar-primary: 205 100% 21%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 204 44% 98%;
+    --sidebar-accent-foreground: 203 24% 9%;
+    --sidebar-border: 204 20% 94%;
+    --sidebar-ring: 205 100% 21%;
   }
 
   .dark {
