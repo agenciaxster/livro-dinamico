@@ -10,6 +10,8 @@ type ToasterToast = ToastProps & {
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: ToastActionElement;
+  duration?: number;
+  showProgressBar?: boolean;
 };
 
 const actionTypes = {
@@ -134,7 +136,7 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">;
 
-function toast({ ...props }: Toast) {
+function toast({ duration = 5000, showProgressBar = true, ...props }: Toast) {
   const id = genId();
 
   const update = (props: ToasterToast) =>
@@ -149,12 +151,21 @@ function toast({ ...props }: Toast) {
     toast: {
       ...props,
       id,
+      duration,
+      showProgressBar,
       open: true,
       onOpenChange: (open) => {
         if (!open) dismiss();
       },
     },
   });
+
+  // Auto-dismiss após a duração especificada
+  if (duration > 0) {
+    setTimeout(() => {
+      dismiss();
+    }, duration);
+  }
 
   return {
     id: id,
@@ -183,4 +194,45 @@ function useToast() {
   };
 }
 
-export { useToast, toast };
+// Funções auxiliares para diferentes tipos de toast
+const toastSuccess = (title: string, description?: string, options?: { duration?: number; showProgressBar?: boolean }) => {
+  return toast({
+    title,
+    description,
+    variant: "default",
+    duration: options?.duration || 5000,
+    showProgressBar: options?.showProgressBar !== false,
+  });
+};
+
+const toastError = (title: string, description?: string, options?: { duration?: number; showProgressBar?: boolean }) => {
+  return toast({
+    title,
+    description,
+    variant: "destructive",
+    duration: options?.duration || 5000,
+    showProgressBar: options?.showProgressBar !== false,
+  });
+};
+
+const toastWarning = (title: string, description?: string, options?: { duration?: number; showProgressBar?: boolean }) => {
+  return toast({
+    title,
+    description,
+    variant: "default",
+    duration: options?.duration || 5000,
+    showProgressBar: options?.showProgressBar !== false,
+  });
+};
+
+const toastInfo = (title: string, description?: string, options?: { duration?: number; showProgressBar?: boolean }) => {
+  return toast({
+    title,
+    description,
+    variant: "default",
+    duration: options?.duration || 5000,
+    showProgressBar: options?.showProgressBar !== false,
+  });
+};
+
+export { useToast, toast, toastSuccess, toastError, toastWarning, toastInfo };

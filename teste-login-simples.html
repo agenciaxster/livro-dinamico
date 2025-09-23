@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Login - Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            background-color: #f8f9fa;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teste de Login - Versão Simples</h1>
+        
+        <div class="step">
+            <h3>Passo 1: Verificar se o usuário existe</h3>
+            <p>Primeiro, vamos verificar se o usuário admin existe no banco de dados.</p>
+            <button onclick="verificarUsuario()">Verificar Usuário Admin</button>
+            <div id="resultado-usuario" class="result hidden"></div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 2: Testar Login</h3>
+            <p>Digite a senha do usuário admin para testar o login:</p>
+            <input type="email" id="email" value="contato@conectell.com.br" placeholder="Email">
+            <input type="password" id="senha" placeholder="Digite sua senha aqui">
+            <br>
+            <button onclick="testarLogin()">Testar Login</button>
+            <div id="resultado-login" class="result hidden"></div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 3: Instruções</h3>
+            <div class="info">
+                <strong>Se der erro:</strong><br>
+                1. Vá para o Supabase Dashboard<br>
+                2. Authentication → Users<br>
+                3. Procure por: contato@conectell.com.br<br>
+                4. Se não existir, clique em "Add User"<br>
+                5. Se existir, clique em "Reset Password"<br>
+                6. Marque "Email Confirmed" como ✅<br>
+                7. Volte aqui e teste novamente
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Configurações do Supabase
+        const SUPABASE_URL = 'https://udrtuxppnisvbtuzvujr.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkcnR1eHBwbmlzdmJ0dXp2dWpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1NDc1OTUsImV4cCI6MjA3NDEyMzU5NX0.0uafV2-Il96lH4MJgG0hqTPgQBQe2t9ia3jq33h8tKs';
+
+        let supabase;
+
+        // Inicializar Supabase
+        async function inicializar() {
+            try {
+                const { createClient } = await import('https://cdn.skypack.dev/@supabase/supabase-js@2');
+                supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+                console.log('✅ Supabase inicializado');
+            } catch (error) {
+                console.error('❌ Erro ao inicializar Supabase:', error);
+            }
+        }
+
+        // Função para verificar usuário
+        window.verificarUsuario = async function() {
+            const resultDiv = document.getElementById('resultado-usuario');
+            resultDiv.className = 'result info';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Verificando usuário...';
+
+            try {
+                if (!supabase) await inicializar();
+
+                // Buscar usuário na tabela users
+                const { data: usuario, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', 'contato@conectell.com.br')
+                    .single();
+
+                if (error || !usuario) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ USUÁRIO NÃO ENCONTRADO
+
+O usuário contato@conectell.com.br não existe na tabela 'users'.
+
+SOLUÇÃO:
+1. Vá para o Supabase Dashboard
+2. Authentication → Users
+3. Clique em "Add User"
+4. Email: contato@conectell.com.br
+5. Password: Defina uma senha
+6. Confirm Email: ✅ Marque como confirmado
+7. Volte aqui e teste novamente`;
+                    return;
+                }
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ USUÁRIO ENCONTRADO!
+
+Email: ${usuario.email}
+Nome: ${usuario.name}
+Role: ${usuario.role}
+Status: ${usuario.status}
+Master Admin: ${usuario.is_master_admin ? 'Sim' : 'Não'}
+Auth User ID: ${usuario.auth_user_id || 'Não definido'}
+
+${usuario.status === 'active' ? '✅ Status está ativo' : '⚠️ Status não está ativo'}
+${usuario.role === 'admin' || usuario.is_master_admin ? '✅ Tem permissões de admin' : '⚠️ Não tem permissões de admin'}`;
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ ERRO: ${error.message}`;
+            }
+        };
+
+        // Função para testar login
+        window.testarLogin = async function() {
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const resultDiv = document.getElementById('resultado-login');
+
+            if (!senha) {
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = '❌ Por favor, digite a senha!';
+                return;
+            }
+
+            resultDiv.className = 'result info';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Testando login...';
+
+            try {
+                if (!supabase) await inicializar();
+
+                // Tentar fazer login
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: senha
+                });
+
+                if (error) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ ERRO NO LOGIN: ${error.message}
+
+POSSÍVEIS SOLUÇÕES:
+1. Senha incorreta - Redefina no Supabase Dashboard
+2. Email não confirmado - Marque como confirmado no Dashboard
+3. Usuário não existe no Auth - Crie o usuário no Dashboard
+
+COMO RESOLVER:
+1. Vá para: https://supabase.com/dashboard
+2. Selecione seu projeto
+3. Authentication → Users
+4. Procure por: ${email}
+5. Se não existir: "Add User"
+6. Se existir: "Reset Password" e marque "Email Confirmed"`;
+                    return;
+                }
+
+                // Login bem-sucedido
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `🎉 LOGIN BEM-SUCEDIDO!
+
+User ID: ${data.user.id}
+Email: ${data.user.email}
+Email Confirmado: ${data.user.email_confirmed_at ? 'Sim' : 'Não'}
+
+✅ O login está funcionando!
+✅ Agora você pode usar essas credenciais na aplicação principal.
+
+PRÓXIMO PASSO:
+Vá para http://localhost:5173 e faça login com:
+Email: ${email}
+Senha: (a mesma que você testou aqui)`;
+
+                // Fazer logout para não interferir
+                await supabase.auth.signOut();
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ ERRO GERAL: ${error.message}`;
+            }
+        };
+
+        // Inicializar quando a página carregar
+        inicializar();
+    </script>
+</body>
+</html>

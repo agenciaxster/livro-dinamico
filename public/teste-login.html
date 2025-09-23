@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Login - Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            background-color: #f8f9fa;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .hidden {
+            display: none;
+        }
+        .manual-test {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teste de Login - Versão Simples</h1>
+        
+        <div class="manual-test">
+            <h3>📋 Teste Manual Rápido</h3>
+            <p><strong>Se você não conseguir usar os botões abaixo, faça este teste manual:</strong></p>
+            <ol>
+                <li>Vá para: <a href="https://supabase.com/dashboard" target="_blank">https://supabase.com/dashboard</a></li>
+                <li>Selecione seu projeto</li>
+                <li>Vá em <strong>Authentication → Users</strong></li>
+                <li>Procure por: <strong>contato@conectell.com.br</strong></li>
+                <li>Se NÃO existir: clique em <strong>"Add User"</strong> e crie com essa senha</li>
+                <li>Se existir: clique nos 3 pontinhos → <strong>"Reset Password"</strong></li>
+                <li>Marque <strong>"Email Confirmed"</strong> como ✅</li>
+                <li>Teste o login em: <a href="http://localhost:8081" target="_blank">http://localhost:8081</a></li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Passo 1: Verificar se o usuário existe</h3>
+            <p>Primeiro, vamos verificar se o usuário admin existe no banco de dados.</p>
+            <button onclick="verificarUsuario()">Verificar Usuário Admin</button>
+            <div id="resultado-usuario" class="result hidden"></div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 2: Testar Login</h3>
+            <p>Digite a senha do usuário admin para testar o login:</p>
+            <input type="email" id="email" value="contato@conectell.com.br" placeholder="Email">
+            <input type="password" id="senha" placeholder="Digite sua senha aqui">
+            <br>
+            <button onclick="testarLogin()">Testar Login</button>
+            <div id="resultado-login" class="result hidden"></div>
+        </div>
+
+        <div class="step">
+            <h3>Passo 3: Ir para a aplicação</h3>
+            <p>Depois que o teste der certo, use o mesmo email e senha aqui:</p>
+            <a href="http://localhost:8081" target="_blank" style="display: inline-block; background: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px 0;">
+                🚀 Abrir Aplicação Principal
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Configurações do Supabase (sem usar módulos ES6 para compatibilidade)
+        const SUPABASE_URL = 'https://udrtuxppnisvbtuzvujr.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkcnR1eHBwbmlzdmJ0dXp2dWpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1NDc1OTUsImV4cCI6MjA3NDEyMzU5NX0.0uafV2-Il96lH4MJgG0hqTPgQBQe2t9ia3jq33h8tKs';
+
+        // Função para verificar usuário (versão simplificada)
+        window.verificarUsuario = function() {
+            const resultDiv = document.getElementById('resultado-usuario');
+            resultDiv.className = 'result info';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = `🔍 VERIFICAÇÃO MANUAL NECESSÁRIA
+
+Como não conseguimos conectar automaticamente, faça esta verificação:
+
+1. Vá para: https://supabase.com/dashboard
+2. Selecione seu projeto
+3. Authentication → Users
+4. Procure por: contato@conectell.com.br
+
+SE ENCONTRAR O USUÁRIO:
+✅ Usuário existe
+✅ Verifique se "Email Confirmed" está marcado
+✅ Se necessário, clique em "Reset Password"
+
+SE NÃO ENCONTRAR:
+❌ Usuário não existe
+🔧 Clique em "Add User"
+📧 Email: contato@conectell.com.br
+🔑 Password: Defina uma senha forte
+✅ Marque "Email Confirmed"`;
+        };
+
+        // Função para testar login (versão simplificada)
+        window.testarLogin = function() {
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const resultDiv = document.getElementById('resultado-login');
+
+            if (!senha) {
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = '❌ Por favor, digite a senha!';
+                return;
+            }
+
+            resultDiv.className = 'result info';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = `📝 TESTE MANUAL DE LOGIN
+
+Como não conseguimos testar automaticamente, faça este teste:
+
+1. Vá para: http://localhost:8081
+2. Use estas credenciais:
+   📧 Email: ${email}
+   🔑 Senha: ${senha}
+
+SE DER ERRO:
+❌ Senha incorreta → Redefina no Supabase Dashboard
+❌ Email não confirmado → Marque como confirmado
+❌ Usuário não existe → Crie o usuário primeiro
+
+SE DER CERTO:
+✅ Login bem-sucedido!
+✅ Você conseguirá acessar o dashboard
+✅ Problema resolvido!
+
+PRÓXIMO PASSO:
+Teste agora em: http://localhost:8081`;
+        };
+    </script>
+</body>
+</html>

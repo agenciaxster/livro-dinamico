@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Login - Localhost</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+        .log {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Login - Localhost</h1>
+        <p>Esta página vai testar a conexão com o Supabase e o login do usuário admin.</p>
+
+        <div class="test-section info">
+            <h3>📋 Informações do Ambiente</h3>
+            <div id="env-info">Carregando...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔗 Teste de Conexão Supabase</h3>
+            <button onclick="testConnection()">Testar Conexão</button>
+            <div id="connection-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👤 Verificar Usuário Admin</h3>
+            <button onclick="checkAdminUser()">Verificar Admin</button>
+            <div id="admin-check-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔐 Teste de Login</h3>
+            <input type="email" id="email" placeholder="Email" value="contato@conectell.com.br" style="width: 250px; padding: 8px; margin: 5px;">
+            <input type="password" id="password" placeholder="Senha" style="width: 250px; padding: 8px; margin: 5px;">
+            <br>
+            <button onclick="testLogin()">Testar Login</button>
+            <div id="login-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Logs de Debug</h3>
+            <button onclick="clearLogs()">Limpar Logs</button>
+            <div id="debug-logs" class="log"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
+
+        // Configurações do Supabase (mesmas do .env)
+        const supabaseUrl = 'https://udrtuxppnisvbtuzvujr.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkcnR1eHBwbmlzdmJ0dXp2dWpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1NDc1OTUsImV4cCI6MjA3NDEyMzU5NX0.0uafV2-Il96lH4MJgG0hqTPgQBQe2t9ia3jq33h8tKs';
+
+        const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('debug-logs');
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            logDiv.textContent += logEntry;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(logEntry);
+        }
+
+        // Mostrar informações do ambiente
+        document.getElementById('env-info').innerHTML = `
+            <strong>Supabase URL:</strong> ${supabaseUrl}<br>
+            <strong>Anon Key:</strong> ${supabaseAnonKey.substring(0, 50)}...<br>
+            <strong>Timestamp:</strong> ${new Date().toLocaleString()}
+        `;
+
+        window.testConnection = async function() {
+            const resultDiv = document.getElementById('connection-result');
+            resultDiv.innerHTML = '<p>Testando conexão...</p>';
+            
+            try {
+                log('Iniciando teste de conexão com Supabase');
+                
+                // Teste básico de conexão
+                const { data, error } = await supabase.from('users').select('count').limit(1);
+                
+                if (error) {
+                    throw error;
+                }
+                
+                resultDiv.innerHTML = '<div class="success"><strong>✅ Conexão OK!</strong><br>Supabase conectado com sucesso.</div>';
+                log('Conexão com Supabase estabelecida com sucesso');
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><strong>❌ Erro de Conexão!</strong><br>${error.message}</div>`;
+                log(`Erro de conexão: ${error.message}`, 'error');
+            }
+        };
+
+        window.checkAdminUser = async function() {
+            const resultDiv = document.getElementById('admin-check-result');
+            resultDiv.innerHTML = '<p>Verificando usuário admin...</p>';
+            
+            try {
+                log('Verificando usuário admin no banco de dados');
+                
+                // Verificar na tabela auth.users
+                const { data: authUser, error: authError } = await supabase.auth.admin.listUsers();
+                log(`Resultado auth.users: ${authUser ? 'encontrado' : 'não encontrado'}`);
+                
+                // Verificar na tabela public.users
+                const { data: publicUser, error: publicError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', 'contato@conectell.com.br')
+                    .single();
+                
+                if (publicError && publicError.code !== 'PGRST116') {
+                    throw publicError;
+                }
+                
+                let result = '<div class="info"><h4>Resultado da Verificação:</h4>';
+                
+                if (publicUser) {
+                    result += `
+                        <strong>✅ Usuário encontrado na tabela public.users:</strong><br>
+                        - Email: ${publicUser.email}<br>
+                        - Role: ${publicUser.role}<br>
+                        - Status: ${publicUser.status}<br>
+                        - Master Admin: ${publicUser.is_master_admin}<br>
+                        - Auth User ID: ${publicUser.auth_user_id || 'Não definido'}<br>
+                    `;
+                    log(`Usuário encontrado: role=${publicUser.role}, status=${publicUser.status}, is_master_admin=${publicUser.is_master_admin}`);
+                } else {
+                    result += '<strong>❌ Usuário NÃO encontrado na tabela public.users</strong><br>';
+                    log('Usuário não encontrado na tabela public.users', 'error');
+                }
+                
+                result += '</div>';
+                resultDiv.innerHTML = result;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><strong>❌ Erro ao verificar usuário!</strong><br>${error.message}</div>`;
+                log(`Erro ao verificar usuário: ${error.message}`, 'error');
+            }
+        };
+
+        window.testLogin = async function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('login-result');
+            
+            if (!email || !password) {
+                resultDiv.innerHTML = '<div class="error">Por favor, preencha email e senha.</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<p>Testando login...</p>';
+            
+            try {
+                log(`Tentando login com email: ${email}`);
+                
+                // Tentar fazer login
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                log('Login realizado com sucesso no Supabase Auth');
+                
+                // Verificar dados do usuário
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', email)
+                    .single();
+                
+                let result = '<div class="success"><h4>✅ Login realizado com sucesso!</h4>';
+                result += `<strong>Dados do Auth:</strong><br>`;
+                result += `- User ID: ${data.user.id}<br>`;
+                result += `- Email: ${data.user.email}<br>`;
+                result += `- Email Confirmado: ${data.user.email_confirmed_at ? 'Sim' : 'Não'}<br>`;
+                
+                if (userData) {
+                    result += `<br><strong>Dados da Tabela Users:</strong><br>`;
+                    result += `- Role: ${userData.role}<br>`;
+                    result += `- Status: ${userData.status}<br>`;
+                    result += `- Master Admin: ${userData.is_master_admin}<br>`;
+                } else {
+                    result += `<br><strong>⚠️ Usuário não encontrado na tabela public.users</strong><br>`;
+                }
+                
+                result += '</div>';
+                resultDiv.innerHTML = result;
+                
+                log(`Login bem-sucedido. Role: ${userData?.role}, Status: ${userData?.status}`);
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><strong>❌ Erro no Login!</strong><br>${error.message}</div>`;
+                log(`Erro no login: ${error.message}`, 'error');
+            }
+        };
+
+        window.clearLogs = function() {
+            document.getElementById('debug-logs').textContent = '';
+        };
+
+        // Auto-executar teste de conexão
+        setTimeout(testConnection, 1000);
+    </script>
+</body>
+</html>

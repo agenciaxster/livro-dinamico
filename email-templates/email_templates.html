@@ -1,0 +1,196 @@
+<!-- =====================================================
+     TEMPLATES DE EMAIL PARA SUPABASE AUTH
+     Livro Dinâmico - Sistema de Autenticação
+     ===================================================== -->
+
+<!-- 1. TEMPLATE: CONFIRMAÇÃO DE CADASTRO -->
+<!-- ===================================================== -->
+<!-- Para usar: Supabase Dashboard > Authentication > Email Templates > Confirm signup -->
+
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+  <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #2563eb; margin: 0; font-size: 28px;">📚 Livro Dinâmico</h1>
+      <p style="color: #6b7280; margin: 5px 0 0 0;">Sistema de Gestão Financeira</p>
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <div style="text-align: center;">
+      <h2 style="color: #1f2937; margin-bottom: 20px;">Bem-vindo ao Livro Dinâmico!</h2>
+      
+      <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+        Obrigado por se cadastrar! Para começar a usar nossa plataforma, você precisa confirmar seu endereço de email.
+      </p>
+      
+      <!-- Botão de Confirmação -->
+      <div style="margin: 30px 0;">
+        <a href="{{ .ConfirmationURL }}" 
+           style="background-color: #2563eb; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">
+          ✅ Confirmar Minha Conta
+        </a>
+      </div>
+      
+      <p style="color: #6b7280; font-size: 14px; margin-top: 25px;">
+        Se o botão não funcionar, copie e cole este link no seu navegador:<br>
+        <a href="{{ .ConfirmationURL }}" style="color: #2563eb; word-break: break-all;">{{ .ConfirmationURL }}</a>
+      </p>
+    </div>
+    
+    <!-- Footer -->
+    <div style="border-top: 1px solid #e5e7eb; margin-top: 30px; padding-top: 20px; text-align: center;">
+      <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+        Se você não se cadastrou no Livro Dinâmico, pode ignorar este email com segurança.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+
+<!-- 2. TEMPLATE: REDEFINIR SENHA -->
+<!-- ===================================================== -->
+<!-- Para usar: Supabase Dashboard > Authentication > Email Templates > Reset password -->
+
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+  <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #2563eb; margin: 0; font-size: 28px;">📚 Livro Dinâmico</h1>
+      <p style="color: #6b7280; margin: 5px 0 0 0;">Sistema de Gestão Financeira</p>
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <div style="text-align: center;">
+      <h2 style="color: #1f2937; margin-bottom: 20px;">🔐 Redefinir Senha</h2>
+      
+      <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+        Recebemos uma solicitação para redefinir a senha da sua conta. Clique no botão abaixo para criar uma nova senha.
+      </p>
+      
+      <!-- Botão de Reset -->
+      <div style="margin: 30px 0;">
+        <a href="{{ .ConfirmationURL }}" 
+           style="background-color: #dc2626; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">
+          🔑 Redefinir Minha Senha
+        </a>
+      </div>
+      
+      <p style="color: #6b7280; font-size: 14px; margin-top: 25px;">
+        Se o botão não funcionar, copie e cole este link no seu navegador:<br>
+        <a href="{{ .ConfirmationURL }}" style="color: #dc2626; word-break: break-all;">{{ .ConfirmationURL }}</a>
+      </p>
+      
+      <!-- Aviso de Segurança -->
+      <div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin-top: 25px;">
+        <p style="color: #92400e; font-size: 14px; margin: 0;">
+          ⚠️ <strong>Importante:</strong> Este link expira em 1 hora por motivos de segurança.
+        </p>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div style="border-top: 1px solid #e5e7eb; margin-top: 30px; padding-top: 20px; text-align: center;">
+      <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+        Se você não solicitou a redefinição de senha, pode ignorar este email com segurança.<br>
+        Sua senha atual permanecerá inalterada.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+
+<!-- 3. TEMPLATE: CONVITE DE USUÁRIO (OPCIONAL) -->
+<!-- ===================================================== -->
+<!-- Para usar: Supabase Dashboard > Authentication > Email Templates > Invite user -->
+
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+  <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #2563eb; margin: 0; font-size: 28px;">📚 Livro Dinâmico</h1>
+      <p style="color: #6b7280; margin: 5px 0 0 0;">Sistema de Gestão Financeira</p>
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <div style="text-align: center;">
+      <h2 style="color: #1f2937; margin-bottom: 20px;">🎉 Você foi convidado!</h2>
+      
+      <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+        Você foi convidado para se juntar ao <strong>Livro Dinâmico</strong>. 
+        Clique no botão abaixo para aceitar o convite e criar sua conta.
+      </p>
+      
+      <!-- Botão de Convite -->
+      <div style="margin: 30px 0;">
+        <a href="{{ .ConfirmationURL }}" 
+           style="background-color: #059669; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">
+          🚀 Aceitar Convite
+        </a>
+      </div>
+      
+      <p style="color: #6b7280; font-size: 14px; margin-top: 25px;">
+        Se o botão não funcionar, copie e cole este link no seu navegador:<br>
+        <a href="{{ .ConfirmationURL }}" style="color: #059669; word-break: break-all;">{{ .ConfirmationURL }}</a>
+      </p>
+    </div>
+    
+    <!-- Footer -->
+    <div style="border-top: 1px solid #e5e7eb; margin-top: 30px; padding-top: 20px; text-align: center;">
+      <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+        Se você não esperava este convite, pode ignorar este email com segurança.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+
+<!-- 4. TEMPLATE: MUDANÇA DE EMAIL (OPCIONAL) -->
+<!-- ===================================================== -->
+<!-- Para usar: Supabase Dashboard > Authentication > Email Templates > Change email address -->
+
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+  <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #2563eb; margin: 0; font-size: 28px;">📚 Livro Dinâmico</h1>
+      <p style="color: #6b7280; margin: 5px 0 0 0;">Sistema de Gestão Financeira</p>
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <div style="text-align: center;">
+      <h2 style="color: #1f2937; margin-bottom: 20px;">📧 Confirmar Novo Email</h2>
+      
+      <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+        Você solicitou a alteração do email da sua conta. 
+        Para confirmar este novo endereço, clique no botão abaixo.
+      </p>
+      
+      <!-- Botão de Confirmação -->
+      <div style="margin: 30px 0;">
+        <a href="{{ .ConfirmationURL }}" 
+           style="background-color: #7c3aed; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">
+          ✉️ Confirmar Novo Email
+        </a>
+      </div>
+      
+      <p style="color: #6b7280; font-size: 14px; margin-top: 25px;">
+        Se o botão não funcionar, copie e cole este link no seu navegador:<br>
+        <a href="{{ .ConfirmationURL }}" style="color: #7c3aed; word-break: break-all;">{{ .ConfirmationURL }}</a>
+      </p>
+    </div>
+    
+    <!-- Footer -->
+    <div style="border-top: 1px solid #e5e7eb; margin-top: 30px; padding-top: 20px; text-align: center;">
+      <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+        Se você não solicitou esta alteração, entre em contato conosco imediatamente.
+      </p>
+    </div>
+  </div>
+</div>
