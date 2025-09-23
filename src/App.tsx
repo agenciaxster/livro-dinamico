@@ -84,7 +84,7 @@ const AppRoutes = () => {
         <Route 
           path="/usuarios" 
           element={
-            <ProtectedRoute isAdmin={true}>
+            <ProtectedRoute adminOnly={true}>
               <Users />
             </ProtectedRoute>
           } 
@@ -93,7 +93,7 @@ const AppRoutes = () => {
         <Route 
           path="/empresa" 
           element={
-            <ProtectedRoute isAdmin={true}>
+            <ProtectedRoute adminOnly={true}>
               <Company />
             </ProtectedRoute>
           } 
@@ -102,7 +102,7 @@ const AppRoutes = () => {
         <Route 
           path="/configuracoes" 
           element={
-            <ProtectedRoute isAdmin={true}>
+            <ProtectedRoute adminOnly={true}>
               <Settings />
             </ProtectedRoute>
           } 
@@ -111,7 +111,7 @@ const AppRoutes = () => {
         <Route 
           path="/categorias" 
           element={
-            <ProtectedRoute isAdmin={true}>
+            <ProtectedRoute adminOnly={true}>
               <Categories />
             </ProtectedRoute>
           } 

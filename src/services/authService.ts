@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase'
+import { supabase } from '../integrations/supabase/client'
 
 export interface User {
   id: string
@@ -32,18 +32,24 @@ export interface RegisterData {
 class AuthService {
   private currentUser: User | null = null
 
-  // Login do usuário usando Supabase Auth
   async login(credentials: LoginCredentials): Promise<{ user: User | null; error: string | null }> {
     try {
+      console.log('🔍 Tentando login com:', credentials.email);
+      
       // Fazer login com Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password
       })
 
+      console.log('📧 Resposta do Supabase Auth:', { authData, authError });
+
       if (authError || !authData.user) {
+        console.error('❌ Erro na autenticação Supabase:', authError);
         return { user: null, error: 'Email ou senha incorretos' }
       }
+
+      console.log('✅ Auth bem-sucedido, buscando dados do usuário...');
 
       // Buscar dados do usuário na tabela users
       let { data: userData, error: userError } = await supabase
@@ -52,7 +58,11 @@ class AuthService {
         .eq('auth_user_id', authData.user.id)
         .maybeSingle()
 
+      console.log('👤 Usuário encontrado por auth_user_id:', { userData, userError });
+
       if (userError || !userData) {
+        console.log('⚠️ Usuário não encontrado por auth_user_id, tentando por email...');
+        
         // Se não encontrar, buscar por email (para usuários antigos)
         const { data: userByEmail, error: emailError } = await supabase
           .from('users')
@@ -60,25 +70,37 @@ class AuthService {
           .eq('email', credentials.email)
           .maybeSingle()
 
+        console.log('📧 Usuário encontrado por email:', { userByEmail, emailError });
+
         if (emailError || !userByEmail) {
+          console.error('❌ Usuário não encontrado na tabela users');
           return { user: null, error: 'Usuário não encontrado no sistema' }
         }
 
+        console.log('🔄 Atualizando auth_user_id do usuário...');
         // Atualizar o auth_user_id do usuário existente
-        await supabase
+        const { error: updateError } = await supabase
           .from('users')
           .update({ auth_user_id: authData.user.id })
           .eq('id', userByEmail.id)
+
+        if (updateError) {
+          console.error('❌ Erro ao atualizar auth_user_id:', updateError);
+        } else {
+          console.log('✅ auth_user_id atualizado com sucesso');
+        }
 
         userData = userByEmail
       }
 
       // Verificar se usuário está ativo
       if (userData.status !== 'active') {
+        console.warn('⚠️ Usuário não está ativo:', userData.status);
         await supabase.auth.signOut()
         return { user: null, error: 'Usuário inativo ou pendente' }
       }
 
+      console.log('✅ Usuário está ativo, atualizando último login...');
       // Atualizar último login
       await supabase
         .from('users')
@@ -90,8 +112,8 @@ class AuthService {
         id: userData.id,
         name: userData.name,
         email: userData.email,
-        role: userData.role,
-        status: userData.status,
+        role: userData.role as 'admin' | 'user' | 'viewer' | 'cliente',
+        status: userData.status as 'active' | 'inactive' | 'pending',
         companyId: userData.company_id,
         isMasterAdmin: userData.is_master_admin,
         avatar: userData.avatar_url,
@@ -101,6 +123,7 @@ class AuthService {
         updatedAt: userData.updated_at
       }
 
+      console.log('✅ Login bem-sucedido. Dados do usuário:', user);
       this.currentUser = user
 
       // Salvar no localStorage
@@ -109,7 +132,7 @@ class AuthService {
 
       return { user, error: null }
     } catch (error) {
-      console.error('Erro no login:', error)
+      console.error('💥 Erro geral no login:', error)
       return { user: null, error: 'Erro interno do servidor' }
     }
   }
@@ -330,8 +353,8 @@ class AuthService {
         id: userData.id,
         name: userData.name,
         email: userData.email,
-        role: userData.role,
-        status: userData.status,
+        role: userData.role as 'admin' | 'user' | 'viewer' | 'cliente',
+        status: userData.status as 'active' | 'inactive' | 'pending',
         companyId: userData.company_id,
         isMasterAdmin: userData.is_master_admin,
         avatar: userData.avatar_url,
