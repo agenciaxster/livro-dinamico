@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Usuário Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            width: 100%;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Criar Usuário Admin</h1>
+        
+        <button onclick="criarAdmin()">Criar Admin User</button>
+        <div id="resultado" class="result hidden"></div>
+        
+        <div style="margin-top: 20px; padding: 15px; background-color: #e7f3ff; border-radius: 5px;">
+            <h3>Credenciais que serão criadas:</h3>
+            <p><strong>Email:</strong> admin@conectell.com.br</p>
+            <p><strong>Senha:</strong> admin123</p>
+        </div>
+    </div>
+
+    <script type="module">
+        // Configurações do Supabase
+        const SUPABASE_URL = 'https://udrtuxppnisvbtuzvujr.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkcnR1eHBwbmlzdmJ0dXp2dWpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1NDc1OTUsImV4cCI6MjA3NDEyMzU5NX0.0uafV2-Il96lH4MJgG0hqTPgQBQe2t9ia3jq33h8tKs';
+
+        let supabase;
+
+        // Inicializar Supabase
+        async function inicializar() {
+            try {
+                const { createClient } = await import('https://cdn.skypack.dev/@supabase/supabase-js@2');
+                supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+                console.log('✅ Supabase inicializado');
+            } catch (error) {
+                console.error('❌ Erro ao inicializar Supabase:', error);
+            }
+        }
+
+        // Função para criar admin
+        window.criarAdmin = async function() {
+            const resultDiv = document.getElementById('resultado');
+            resultDiv.className = 'result';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Criando usuário admin...';
+
+            try {
+                if (!supabase) await inicializar();
+
+                // Primeiro, verificar se o usuário já existe
+                const { data: existingUser } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', 'admin@conectell.com.br')
+                    .maybeSingle();
+
+                if (existingUser) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Usuário admin@conectell.com.br já existe!
+                    
+Use essas credenciais para fazer login:
+Email: admin@conectell.com.br
+Senha: admin123 (ou a senha que foi definida anteriormente)`;
+                    return;
+                }
+
+                // Criar usuário usando signUp
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: 'admin@conectell.com.br',
+                    password: 'admin123',
+                    options: {
+                        emailRedirectTo: window.location.origin,
+                        data: {
+                            name: 'Admin User',
+                            role: 'admin'
+                        }
+                    }
+                });
+
+                if (authError) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Erro ao criar usuário: ${authError.message}`;
+                    return;
+                }
+
+                console.log('Usuário criado no auth:', authData);
+
+                // Se o usuário foi criado, mas não confirmado, vamos confirmar manualmente na tabela users
+                if (authData.user && !authData.user.email_confirmed_at) {
+                    // Inserir na tabela users diretamente
+                    const { error: insertError } = await supabase
+                        .from('users')
+                        .insert({
+                            auth_user_id: authData.user.id,
+                            name: 'Admin User',
+                            email: 'admin@conectell.com.br',
+                            role: 'admin',
+                            status: 'active',
+                            is_master_admin: true,
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        });
+
+                    if (insertError) {
+                        console.error('Erro ao inserir na tabela users:', insertError);
+                    }
+                }
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ Usuário admin criado com sucesso!
+
+Email: admin@conectell.com.br
+Senha: admin123
+
+${authData.user?.email_confirmed_at ? 
+'✅ Email já confirmado - pode fazer login imediatamente!' : 
+'⚠️ Verifique seu email para confirmar a conta ou use o dashboard do Supabase para confirmar manualmente.'}
+
+Agora você pode fazer login na aplicação principal!`;
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ ERRO GERAL: ${error.message}`;
+                console.error('Erro:', error);
+            }
+        };
+
+        // Inicializar quando a página carregar
+        inicializar();
+    </script>
+</body>
+</html>
