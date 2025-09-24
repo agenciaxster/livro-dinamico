@@ -765,7 +765,6 @@ const Users: React.FC = () => {
                           <Switch
                             checked={user.status === 'active'}
                             onCheckedChange={() => toggleUserStatus(user.id)}
-                            size="sm"
                           />
                           <span className="text-xs text-gray-500 dark:text-gray-400">
                             {user.status === 'active' ? 'Ativo' : 'Inativo'}

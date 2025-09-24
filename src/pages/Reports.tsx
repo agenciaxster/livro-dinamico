@@ -186,7 +186,7 @@ const Reports: React.FC = () => {
       const accentColor = [239, 68, 68]; // Red-500
       
       // Header sofisticado
-      pdf.setFillColor(...primaryColor);
+      pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
       pdf.rect(0, 0, pageWidth, 40, 'F');
       
       // Logo (simulado)
@@ -225,11 +225,11 @@ const Reports: React.FC = () => {
       // Descrição
       pdf.setFontSize(12);
       pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(...secondaryColor);
+      pdf.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
       pdf.text(reportType.description, 20, 70);
       
       // Linha separadora
-      pdf.setDrawColor(...primaryColor);
+      pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
       pdf.setLineWidth(0.5);
       pdf.line(20, 75, pageWidth - 20, 75);
       
@@ -243,7 +243,7 @@ const Reports: React.FC = () => {
       yPosition += 10;
       pdf.setFontSize(11);
       pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(...secondaryColor);
+      pdf.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
       const fromDate = filters.dateFrom || "01/01/2024";
       const toDate = filters.dateTo || dateStr;
       pdf.text(`De: ${fromDate} até ${toDate}`, 20, yPosition);
@@ -266,11 +266,11 @@ const Reports: React.FC = () => {
       pdf.rect(20, yPosition, cardWidth, 30);
       
       pdf.setFontSize(10);
-      pdf.setTextColor(...secondaryColor);
+      pdf.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
       pdf.text("VALOR TOTAL", 25, yPosition + 10);
       pdf.setFontSize(16);
       pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(...accentColor);
+      pdf.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
       pdf.text(`R$ ${reportType.summary.total.toLocaleString('pt-BR')}`, 25, yPosition + 22);
       
       // Card 2 - Quantidade
@@ -282,11 +282,11 @@ const Reports: React.FC = () => {
       
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(...secondaryColor);
+      pdf.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
       pdf.text("QUANTIDADE", card2X + 5, yPosition + 10);
       pdf.setFontSize(16);
       pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(...primaryColor);
+      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
       pdf.text(`${reportType.summary.count}`, card2X + 5, yPosition + 22);
       
       // Card 3 - Média
@@ -298,7 +298,7 @@ const Reports: React.FC = () => {
       
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(...secondaryColor);
+      pdf.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
       pdf.text("VALOR MÉDIO", card3X + 5, yPosition + 10);
       pdf.setFontSize(16);
       pdf.setFont("helvetica", "bold");
@@ -315,7 +315,7 @@ const Reports: React.FC = () => {
       yPosition += 10;
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(...secondaryColor);
+      pdf.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
       
       if (filters.category && filters.category !== "todas") {
         pdf.text(`• Categoria: ${filters.category}`, 25, yPosition);
@@ -340,7 +340,7 @@ const Reports: React.FC = () => {
       yPosition += 10;
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(...secondaryColor);
+      pdf.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
       pdf.text("• Este relatório foi gerado automaticamente pelo sistema.", 25, yPosition);
       yPosition += 8;
       pdf.text("• Os dados apresentados refletem as informações disponíveis no momento da geração.", 25, yPosition);
@@ -349,7 +349,7 @@ const Reports: React.FC = () => {
       
       // Footer sofisticado
       const footerY = pageHeight - 30;
-      pdf.setFillColor(...primaryColor);
+      pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
       pdf.rect(0, footerY, pageWidth, 30, 'F');
       
       pdf.setTextColor(255, 255, 255);
@@ -729,7 +729,9 @@ const Reports: React.FC = () => {
               </div>
               <div>
                 <Label className="text-sm font-medium">Filtros aplicados</Label>
-                <p className="text-sm text-gray-700">{selectedReport.filters}</p>
+                <p className="text-sm text-gray-700">
+                  {selectedReport.type && `Tipo: ${selectedReport.type}`}
+                </p>
               </div>
             </div>
           )}
@@ -764,11 +766,11 @@ const Reports: React.FC = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="edit-filters">Filtros aplicados</Label>
+                <Label htmlFor="edit-title">Título</Label>
                 <Input
-                  id="edit-filters"
-                  value={editingReport.filters}
-                  onChange={(e) => setEditingReport({...editingReport, filters: e.target.value})}
+                  id="edit-title"
+                  value={editingReport.title}
+                  onChange={(e) => setEditingReport({...editingReport, title: e.target.value})}
                 />
               </div>
             </div>

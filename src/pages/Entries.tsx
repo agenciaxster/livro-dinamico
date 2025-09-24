@@ -19,9 +19,14 @@ import { useAuth } from '@/contexts/AuthContext';
 interface Category {
   id: string;
   name: string;
+  description?: string;
   color: string;
+  icon?: string;
   type: 'income' | 'expense';
-  is_active: boolean;
+  companyId?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface Account {
@@ -53,26 +58,33 @@ const Entries: React.FC = () => {
     notes: ''
   });
 
-  // Carregar dados iniciais
-  useEffect(() => {
-    loadData();
-  }, [user, loadData]);
-
   const loadData = useCallback(async () => {
-    if (!user?.company_id) return;
+    if (!user?.companyId) return;
 
     try {
       setLoading(true);
       setError(null);
 
-      const [entriesData, categoriesData, accountsData] = await Promise.all([
-        entriesService.getEntries(user.company_id),
-        categoriesService.getCategories(user.company_id),
-        accountsService.getAccounts(user.company_id)
+      const [entriesData, categoriesResult, accountsData] = await Promise.all([
+        entriesService.getEntries(user.companyId),
+        categoriesService.getCategories(user.companyId),
+        accountsService.getAccounts(user.companyId)
       ]);
 
       setEntries(entriesData);
-      setCategories(categoriesData.filter(cat => cat.is_active));
+      const mappedCategories: Category[] = categoriesResult.categories.map(cat => ({
+        id: cat.id,
+        name: cat.name,
+        description: cat.description,
+        color: cat.color,
+        icon: cat.icon,
+        type: cat.type,
+        companyId: cat.companyId,
+        isActive: cat.isActive,
+        createdAt: cat.createdAt,
+        updatedAt: cat.updatedAt
+      }));
+      setCategories(mappedCategories);
       setAccounts(accountsData.filter(acc => acc.is_active));
     } catch (err) {
       console.error('Erro ao carregar dados:', err);
@@ -80,7 +92,12 @@ const Entries: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [user?.company_id]);
+  }, [user?.companyId]);
+
+  // Carregar dados iniciais
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   // Estados para sidebar e filtros avançados
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
@@ -149,7 +166,7 @@ const Entries: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user?.company_id) {
+    if (!user?.companyId) {
       toast({
         title: "Erro",
         description: "Usuário não autenticado.",
@@ -174,7 +191,7 @@ const Entries: React.FC = () => {
         type: formData.type,
         category_id: formData.category,
         account_id: formData.account,
-        company_id: user.company_id,
+        company_id: user.companyId,
         date: formData.date,
         notes: formData.notes || undefined
       };
@@ -360,7 +377,7 @@ const Entries: React.FC = () => {
     doc.setFont('helvetica', 'normal');
     doc.text('Criado em:', 20, yPosition);
     doc.setTextColor(0, 0, 0);
-    doc.text(new Date(entry.createdAt).toLocaleString('pt-BR'), 70, yPosition);
+    doc.text(new Date(entry.created_at).toLocaleString('pt-BR'), 70, yPosition);
     
     // Footer
     const footerY = pageHeight - 30;

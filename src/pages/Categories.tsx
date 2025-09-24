@@ -30,12 +30,13 @@ export default function Categories() {
   });
 
   const loadCategories = useCallback(async () => {
-    if (!user?.company_id) return;
+    if (!user?.companyId) return;
     
     try {
       setLoading(true);
       setError(null);
-      const data = await categoriesService.getCategories(user.company_id);
+      const { categories: data, error: serviceError } = await categoriesService.getCategories(user.companyId);
+      if (serviceError) throw new Error(serviceError);
       
       // Converter para o formato da interface local
       const formattedCategories: Category[] = data.map(cat => ({
@@ -56,7 +57,7 @@ export default function Categories() {
     } finally {
       setLoading(false);
     }
-  }, [user?.company_id]);
+  }, [user?.companyId]);
 
   useEffect(() => {
     loadCategories();
@@ -65,7 +66,7 @@ export default function Categories() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user?.company_id) return;
+    if (!user?.companyId) return;
     
     try {
       if (editingCategory) {
@@ -75,7 +76,7 @@ export default function Categories() {
         // Criar nova categoria
         await categoriesService.createCategory({
           ...formData,
-          company_id: user.company_id
+          companyId: user.companyId
         });
       }
       

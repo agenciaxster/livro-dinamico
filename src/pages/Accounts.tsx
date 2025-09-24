@@ -51,7 +51,7 @@ const Accounts: React.FC = () => {
     setError(null);
     
     try {
-      const data = await accountsService.getAccounts(user.company_id);
+      const data = await accountsService.getAccounts(user.companyId);
       setAccounts(data);
     } catch (err) {
       console.error('Erro ao carregar contas:', err);
@@ -109,7 +109,7 @@ const Accounts: React.FC = () => {
           balance: formData.balance,
           description: formData.description,
           is_active: formData.isActive,
-          company_id: user.company_id,
+          company_id: user.companyId,
           currency: 'BRL'
         });
         

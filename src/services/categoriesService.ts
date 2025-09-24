@@ -170,7 +170,7 @@ class CategoriesService {
       if (data.color) updateData.color = data.color
       if (data.icon !== undefined) updateData.icon = data.icon
       if (data.type) updateData.type = data.type
-      if (data.isActive !== undefined) updateData.is_active = data.isActive
+      if (data.isActive !== undefined) updateData.isActive = data.isActive
 
       const { data: updatedCategory, error } = await supabase
         .from('categories')

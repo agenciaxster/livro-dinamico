@@ -306,7 +306,7 @@ class EntriesService {
       count: number;
     }
 
-    const categoryStats = (data || []).reduce((acc: Record<string, CategoryStat>, entry: Entry) => {
+    const categoryStats = (data || []).reduce((acc: Record<string, CategoryStat>, entry: any) => {
       const categoryId = entry.category?.id || 'uncategorized';
       const categoryName = entry.category?.name || 'Sem categoria';
       const categoryColor = entry.category?.color || '#gray';
