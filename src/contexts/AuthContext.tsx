@@ -10,7 +10,7 @@ export interface User {
   role: UserRole;
   companyId?: string;
   isMasterAdmin: boolean;
-  avatar?: string;
+  avatarUrl?: string;
   phone?: string;
 }
 
@@ -99,7 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         role: currentUser.role as UserRole,
         companyId: currentUser.companyId,
         isMasterAdmin: currentUser.isMasterAdmin,
-        avatar: currentUser.avatar,
+        avatarUrl: currentUser.avatarUrl,
         phone: currentUser.phone
       });
     }
@@ -118,7 +118,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           role: authUser.role as UserRole,
           companyId: authUser.companyId,
           isMasterAdmin: authUser.isMasterAdmin,
-          avatar: authUser.avatar,
+          avatarUrl: authUser.avatarUrl,
           phone: authUser.phone
         };
         setUser(userData);

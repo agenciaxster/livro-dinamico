@@ -8,7 +8,7 @@ export interface User {
   status: 'active' | 'inactive' | 'pending'
   companyId?: string
   isMasterAdmin: boolean
-  avatar?: string
+  avatarUrl?: string
   phone?: string
   lastLogin?: string
   createdAt: string
@@ -53,10 +53,10 @@ class AuthService {
 
       // Buscar dados do usuário na tabela users
       let { data: userData, error: userError } = await supabase
-        .from('users')
+        .from('users' as any)
         .select('*')
         .eq('auth_user_id', authData.user.id)
-        .maybeSingle()
+        .maybeSingle() as { data: any; error: any }
 
       console.log('👤 Usuário encontrado por auth_user_id:', { userData, userError });
 
@@ -65,10 +65,10 @@ class AuthService {
         
         // Se não encontrar, buscar por email (para usuários antigos)
         const { data: userByEmail, error: emailError } = await supabase
-          .from('users')
+          .from('users' as any)
           .select('*')
           .eq('email', credentials.email)
-          .maybeSingle()
+          .maybeSingle() as { data: any; error: any }
 
         console.log('📧 Usuário encontrado por email:', { userByEmail, emailError });
 
@@ -80,7 +80,7 @@ class AuthService {
         console.log('🔄 Atualizando auth_user_id do usuário...');
         // Atualizar o auth_user_id do usuário existente
         const { error: updateError } = await supabase
-          .from('users')
+          .from('users' as any)
           .update({ auth_user_id: authData.user.id })
           .eq('id', userByEmail.id)
 
@@ -94,7 +94,7 @@ class AuthService {
       }
 
       // Verificar se usuário está ativo
-      if (userData.status !== 'active') {
+      if (userData && userData.status !== 'active') {
         console.warn('⚠️ Usuário não está ativo:', userData.status);
         await supabase.auth.signOut()
         return { user: null, error: 'Usuário inativo ou pendente' }
@@ -102,25 +102,27 @@ class AuthService {
 
       console.log('✅ Usuário está ativo, atualizando último login...');
       // Atualizar último login
-      await supabase
-        .from('users')
-        .update({ last_login: new Date().toISOString() })
-        .eq('id', userData.id)
+      if (userData && userData.id) {
+        await supabase
+          .from('users' as any)
+          .update({ last_login: new Date().toISOString() })
+          .eq('id', userData.id)
+      }
 
       // Converter dados do banco para interface User
       const user: User = {
-        id: userData.id,
-        name: userData.name,
-        email: userData.email,
-        role: userData.role as 'admin' | 'user' | 'viewer' | 'cliente',
-        status: userData.status as 'active' | 'inactive' | 'pending',
-        companyId: userData.company_id,
-        isMasterAdmin: userData.is_master_admin,
-        avatar: userData.avatar_url,
-        phone: userData.phone,
-        lastLogin: userData.last_login,
-        createdAt: userData.created_at,
-        updatedAt: userData.updated_at
+        id: userData?.id || '',
+        name: userData?.name || '',
+        email: userData?.email || '',
+        role: (userData?.role as 'admin' | 'user' | 'viewer' | 'cliente') || 'user',
+        status: (userData?.status as 'active' | 'inactive' | 'pending') || 'active',
+        companyId: userData?.company_id,
+        isMasterAdmin: userData?.is_master_admin || false,
+        avatarUrl: userData?.avatar_url,
+        phone: userData?.phone,
+        lastLogin: userData?.last_login,
+        createdAt: userData?.created_at || '',
+        updatedAt: userData?.updated_at || ''
       }
 
       console.log('✅ Login bem-sucedido. Dados do usuário:', user);
@@ -205,11 +207,11 @@ class AuthService {
   async updateProfile(userId: string, data: Partial<User>): Promise<{ success: boolean; error: string | null }> {
     try {
       const { error } = await supabase
-        .from('users')
+        .from('users' as any)
         .update({
           name: data.name,
           phone: data.phone,
-          avatar_url: data.avatar,
+          avatar_url: data.avatarUrl,
           updated_at: new Date().toISOString()
         })
         .eq('id', userId)
@@ -337,7 +339,7 @@ class AuthService {
         return { users: [], error: 'Sem permissão para listar usuários' }
       }
 
-      let query = supabase.from('users').select('*')
+      let query = supabase.from('users' as any).select('*')
       
       if (companyId && !this.isMasterAdmin()) {
         query = query.eq('company_id', companyId)
@@ -349,7 +351,11 @@ class AuthService {
         return { users: [], error: 'Erro ao buscar usuários' }
       }
 
-      const users: User[] = data.map(userData => ({
+      if (!data) {
+        return { users: [], error: null }
+      }
+
+      const users: User[] = data.map((userData: any) => ({
         id: userData.id,
         name: userData.name,
         email: userData.email,
@@ -357,7 +363,7 @@ class AuthService {
         status: userData.status as 'active' | 'inactive' | 'pending',
         companyId: userData.company_id,
         isMasterAdmin: userData.is_master_admin,
-        avatar: userData.avatar_url,
+        avatarUrl: userData.avatar_url,
         phone: userData.phone,
         lastLogin: userData.last_login,
         createdAt: userData.created_at,
@@ -376,10 +382,10 @@ class AuthService {
     try {
       // Verificar se já existe um admin master
       const { data: existingAdmin } = await supabase
-        .from('users')
+        .from('users' as any)
         .select('id')
         .eq('is_master_admin', true)
-        .single()
+        .maybeSingle()
 
       if (existingAdmin) {
         return { success: false, error: 'Admin master já existe' }

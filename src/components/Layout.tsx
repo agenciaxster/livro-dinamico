@@ -64,7 +64,7 @@ export function Layout({ children }: LayoutProps) {
                     <div className="flex flex-col space-y-3">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-12 w-12">
-                          <AvatarImage src={user?.avatar} alt={user?.name} />
+                          <AvatarImage src={user?.avatarUrl} alt={user?.name} />
                           <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                             {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                           </AvatarFallback>
