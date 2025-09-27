@@ -20,6 +20,7 @@ import Accounts from "./pages/Accounts";
 import Reports from "./pages/Reports";
 import Users from "./pages/Users";
 import Company from "./pages/Company";
+import { CreateMasterAdmin } from "./pages/CreateMasterAdmin";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/create-admin" element={<CreateMasterAdmin />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );
