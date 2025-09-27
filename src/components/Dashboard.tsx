@@ -59,40 +59,35 @@ export function Dashboard() {
     try {
       setLoading(true);
       
-      // Buscar dados em paralelo
-      const [entriesResult, accountsResult, categoriesResult] = await Promise.all([
-        entriesService.getEntries(),
-        accountsService.getAccounts(),
-        categoriesService.getCategories()
+      const companyId = '550e8400-e29b-41d4-a716-446655440000';
+      
+      // Buscar dados usando os métodos corretos dos serviços
+      const [entries, accounts, categoriesResult] = await Promise.all([
+        entriesService.getEntries(companyId),
+        accountsService.getAccounts(companyId),
+        categoriesService.getCategories(companyId)
       ]);
 
-      if (entriesResult.error || accountsResult.error || categoriesResult.error) {
-        console.error('Erro ao buscar dados do dashboard');
-        return;
-      }
-
-      const entries = entriesResult.entries || [];
-      const accounts = accountsResult.accounts || [];
-      const categories = categoriesResult.categories || [];
+      const categories = categoriesResult?.categories || [];
 
       // Calcular métricas
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
       
-      const currentMonthEntries = entries.filter(entry => {
+      const currentMonthEntries = entries.filter((entry: any) => {
         const entryDate = new Date(entry.date);
         return entryDate.getMonth() === currentMonth && entryDate.getFullYear() === currentYear;
       });
 
       const income = currentMonthEntries
-        .filter(entry => entry.type === 'income')
-        .reduce((sum, entry) => sum + Number(entry.amount), 0);
+        .filter((entry: any) => entry.type === 'income')
+        .reduce((sum: number, entry: any) => sum + Number(entry.amount), 0);
       
       const expenses = currentMonthEntries
-        .filter(entry => entry.type === 'expense')
-        .reduce((sum, entry) => sum + Number(entry.amount), 0);
+        .filter((entry: any) => entry.type === 'expense')
+        .reduce((sum: number, entry: any) => sum + Number(entry.amount), 0);
 
-      const balance = accounts.reduce((sum, account) => sum + Number(account.balance || 0), 0);
+      const balance = accounts.reduce((sum: number, account: any) => sum + Number(account.balance || 0), 0);
       const profit = income - expenses;
 
       // Formatação de valores
